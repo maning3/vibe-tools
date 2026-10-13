@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今天的你適合哪首 SEVENTEEN？</title>
+<style>
+:root{
+  --rose:#F7CAC9; --serenity:#92A8D1;
+  --ink:#2b2d42; --muted:#6b6f85; --card:#ffffffee; --line:#e6e3ef;
+  --accent:#7d8fcf; --accent2:#e79a9a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  color:var(--ink);
+  background:linear-gradient(160deg,var(--rose) 0%,#e9d8ea 45%,var(--serenity) 100%) fixed;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:520px;margin:0 auto;padding:24px 16px 40px;min-height:100vh;display:flex;flex-direction:column}
+.card{background:var(--card);border-radius:22px;padding:24px 20px;box-shadow:0 10px 30px rgba(80,70,120,.15);backdrop-filter:blur(6px)}
+h1{font-size:1.55rem;line-height:1.35;margin:.2em 0 .4em}
+h2{font-size:1.25rem;margin:.2em 0 .8em;line-height:1.4}
+p{line-height:1.65}
+.sub{color:var(--muted);font-size:.95rem}
+.btn{appearance:none;border:0;border-radius:999px;padding:14px 22px;font-size:1rem;font-weight:600;cursor:pointer;
+  background:linear-gradient(90deg,var(--accent2),var(--accent));color:#fff;box-shadow:0 6px 16px rgba(125,143,207,.35);transition:transform .12s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
+.btn.small{padding:9px 16px;font-size:.9rem}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.center{text-align:center}
+.hidden{display:none!important}
+/* progress */
+.progress{display:flex;gap:6px;margin-bottom:18px}
+.progress span{flex:1;height:6px;border-radius:6px;background:#ffffff99}
+.progress span.on{background:var(--accent)}
+.qnum{font-size:.85rem;color:var(--muted);letter-spacing:.08em;margin-bottom:4px}
+/* options */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts.one{grid-template-columns:1fr}
+.opt{border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:16px 12px;font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;gap:10px;text-align:left;color:var(--ink);transition:border-color .15s,transform .12s}
+.opt:hover{border-color:var(--accent)}
+.opt:active{transform:scale(.97)}
+.emoji{font-size:1.4rem;line-height:1}
+.swatch{width:28px;height:28px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 2px #ffffff88}
+.back{margin-top:16px;background:none;border:0;color:var(--muted);font-size:.9rem;cursor:pointer;padding:6px 0}
+/* result */
+.tag{display:inline-block;font-size:.78rem;padding:3px 10px;border-radius:999px;background:#eef1fb;color:#55608f;margin:0 6px 6px 0}
+.main-title{font-size:1.6rem;font-weight:800;margin:.1em 0 .1em;line-height:1.3;word-break:break-word}
+.orig{color:var(--muted);font-size:.95rem;margin-bottom:10px}
+.yt{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#fff;background:#e04848;border-radius:999px;padding:10px 18px;font-weight:600;font-size:.95rem}
+.hint{font-size:.8rem;color:var(--muted);margin-top:6px}
+.alts h3{font-size:1rem;margin:22px 0 10px}
+.alt{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;width:100%;text-align:left;font-size:1rem;color:var(--ink)}
+.alt:hover{border-color:var(--accent)}
+.alt small{display:block;color:var(--muted);font-size:.8rem;margin-top:2px}
+.alt .go{color:var(--accent);font-size:.85rem;flex:none}
+.foot{margin-top:auto;padding-top:20px;text-align:center;font-size:.75rem;color:#4a4d63aa}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#2b2d42;color:#fff;padding:10px 18px;border-radius:999px;font-size:.9rem;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:.95}
+.fade{animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.deco{font-size:2.6rem;letter-spacing:.2em;margin:4px 0 8px}
+/* 試聽 */
+.np{display:flex;align-items:center;gap:12px;background:#f3f1fa;border-radius:16px;padding:10px 12px;margin-top:12px}
+.np-btn{width:40px;height:40px;border-radius:50%;border:0;flex:none;cursor:pointer;color:#fff;font-size:1rem;
+  background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center}
+.np-btn:disabled{opacity:.4;cursor:default}
+.np-info{flex:1;min-width:0}
+.np-status{font-size:.85rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-bar{height:4px;border-radius:4px;background:#ffffff;margin-top:6px;overflow:hidden}
+.np-bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s linear}
+.eq{display:inline-flex;gap:2px;align-items:flex-end;height:12px;margin-right:6px;vertical-align:-1px}
+.eq b{width:3px;background:var(--accent);border-radius:2px;animation:eq 1s ease-in-out infinite}
+.eq b:nth-child(2){animation-delay:.2s}.eq b:nth-child(3){animation-delay:.4s}
+.paused .eq b{animation-play-state:paused}
+@keyframes eq{0%,100%{height:3px}50%{height:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 開始畫面 -->
+  <section id="intro" class="card center fade">
+    <div class="deco">💎🎵</div>
+    <h1>今天的你<br>適合哪首 SEVENTEEN？</h1>
+    <p class="sub">回答 4 個小問題，從 100 首歌裡<br>挑出最適合你現在的那一首。</p>
+    <button class="btn" id="startBtn">開始測驗</button>
+  </section>
+
+  <!-- 題目畫面 -->
+  <section id="quiz" class="card hidden">
+    <div class="progress" id="progress"></div>
+    <div class="qnum" id="qnum"></div>
+    <h2 id="qtext"></h2>
+    <div class="opts" id="opts"></div>
+    <button class="back" id="backBtn">← 上一題</button>
+  </section>
+
+  <!-- 結果畫面 -->
+  <section id="result" class="card hidden">
+    <div class="qnum">今天的推薦</div>
+    <div class="main-title" id="mTitle"></div>
+    <div class="orig" id="mOrig"></div>
+    <div id="mTags"></div>
+    <div class="np" id="np">
+      <button class="np-btn" id="npBtn" aria-label="播放或暫停" disabled>▶</button>
+      <div class="np-info">
+        <div class="np-status" id="npStatus">準備試聽…</div>
+        <div class="np-bar"><i id="npBar"></i></div>
+      </div>
+    </div>
+    <div class="center" style="margin-top:14px"><a class="yt" id="ytLink" target="_blank" rel="noopener">▶ 到 YouTube 聽</a></div>
+    <div class="alts">
+      <h3>也可以聽聽看</h3>
+      <div id="alts"></div>
+    </div>
+    <div class="row" style="margin-top:18px;justify-content:center">
+      <button class="btn small" id="againBtn">再抽一次</button>
+      <button class="btn ghost small" id="restartBtn">重新作答</button>
+      <button class="btn ghost small" id="shareBtn">複製結果</button>
+    </div>
+  </section>
+
+  <div class="foot">非官方粉絲作品 · 影片版權屬於原權利人</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   歌單資料（修改這裡就好，不必動下面的程式）
+   ---------------------------------------------------------------------
+   t   : 歌名（顯示用）
+   o   : 原文或別名（可省略）
+   cat : 分類，例如 主打 / 收錄曲 / 日文 / Vocal Team / solo 的成員名
+   who : solo 或特別組合的成員（用來組 YouTube 搜尋字，可省略）
+   e   : 能量 1–5（5 最嗨）
+   m   : 心情 → 開心 / 心動 / 幹勁 / 平靜 / 低落 / 酷
+   s   : 場景 → 通勤 / 書桌 / 運動 / 派對 / 深夜 / 散步
+   c   : 色系 → 粉 / 藍 / 紅 / 黃 / 紫 / 黑
+   yt  : YouTube 影片（可空著）。可貼完整網址或 11 碼 ID，
+         有填就直接連到該影片，沒填就連到 YouTube 搜尋結果。
+   ===================================================================== */
+const SONGS = [
+  // ── 全團主打 ──
+  {t:"Adore U", o:"아낀다", cat:"主打", e:4, m:["開心","心動"], s:["通勤","散步"], c:"黃", yt:""},
+  {t:"Mansae", o:"만세", cat:"主打", e:4, m:["開心","心動"], s:["通勤","派對"], c:"藍", yt:"9M7k9ZV67c0"},
+  {t:"Pretty U", o:"예쁘다", cat:"主打", e:4, m:["心動"], s:["散步","通勤"], c:"粉", yt:""},
+  {t:"VERY NICE", o:"아주 NICE", cat:"主打", e:5, m:["開心","幹勁"], s:["派對","運動"], c:"黃", yt:""},
+  {t:"BOOMBOOM", o:"붐붐", cat:"主打", e:5, m:["開心","心動"], s:["派對"], c:"粉", yt:""},
+  {t:"Don't Wanna Cry", o:"울고 싶지 않아", cat:"主打", e:3, m:["低落"], s:["深夜"], c:"藍", yt:""},
+  {t:"CLAP", o:"박수", cat:"主打", e:5, m:["幹勁"], s:["運動","派對"], c:"紅", yt:""},
+  {t:"THANKS", o:"고맙다", cat:"主打", e:3, m:["平靜"], s:["散步","深夜"], c:"藍", yt:""},
+  {t:"Oh My!", o:"어쩌나", cat:"主打", e:4, m:["心動","開心"], s:["通勤"], c:"粉", yt:""},
+  {t:"HOME", cat:"主打", e:3, m:["平靜","低落"], s:["深夜","通勤"], c:"藍", yt:""},
+  {t:"HIT", cat:"主打", e:5, m:["幹勁"], s:["運動"], c:"紅", yt:""},
+  {t:"Fear", o:"독 : Fear", cat:"主打", e:3, m:["低落","酷"], s:["深夜"], c:"黑", yt:""},
+  {t:"Left & Right", cat:"主打", e:4, m:["開心"], s:["通勤","散步"], c:"黃", yt:""},
+  {t:"HOME;RUN", cat:"主打", e:5, m:["開心","幹勁"], s:["派對"], c:"紅", yt:""},
+  {t:"Ready to love", cat:"主打", e:3, m:["心動"], s:["深夜","通勤"], c:"紫", yt:""},
+  {t:"Rock with you", cat:"主打", e:4, m:["心動","幹勁"], s:["通勤"], c:"紅", yt:""},
+  {t:"HOT", cat:"主打", e:5, m:["幹勁","酷"], s:["運動","派對"], c:"紅", yt:""},
+  {t:"_WORLD", cat:"主打", e:4, m:["心動","開心"], s:["散步"], c:"黃", yt:""},
+  {t:"Super", o:"손오공", cat:"主打", e:5, m:["幹勁"], s:["運動"], c:"紅", yt:""},
+  {t:"F*ck My Life", cat:"主打", e:2, m:["低落"], s:["深夜"], c:"藍", yt:""},
+  {t:"God of Music", o:"음악의 신", cat:"主打", e:4, m:["開心"], s:["派對"], c:"黃", yt:""},
+  {t:"MAESTRO", cat:"主打", e:4, m:["酷","幹勁"], s:["書桌","運動"], c:"黑", yt:""},
+  {t:"LOVE, MONEY, FAME", cat:"主打", e:3, m:["酷"], s:["深夜"], c:"黑", yt:""},
+  {t:"THUNDER", cat:"主打", e:5, m:["幹勁","酷"], s:["運動"], c:"紫", yt:""},
+  {t:"Darl+ing", cat:"英文單曲", e:3, m:["心動"], s:["散步"], c:"粉", yt:""},
+
+  // ── 日文 ──
+  {t:"CALL CALL CALL!", cat:"日文", e:4, m:["酷","幹勁"], s:["通勤"], c:"紅", yt:""},
+  {t:"Happy Ending", cat:"日文", e:4, m:["心動"], s:["通勤"], c:"粉", yt:""},
+  {t:"Fallin' Flower", o:"舞い落ちる花びら", cat:"日文", e:3, m:["低落","平靜"], s:["深夜"], c:"粉", yt:""},
+  {t:"24H", cat:"日文", e:4, m:["酷","幹勁"], s:["運動"], c:"紅", yt:""},
+  {t:"Not Alone", o:"ひとりじゃない", cat:"日文", e:4, m:["幹勁","開心"], s:["通勤","散步"], c:"黃", yt:""},
+  {t:"Power of Love", o:"あいのちから", cat:"日文", e:3, m:["平靜","心動"], s:["散步"], c:"粉", yt:""},
+  {t:"DREAM", cat:"日文", e:3, m:["平靜"], s:["散步"], c:"藍", yt:""},
+  {t:"Ima", o:"今 -明日 世界が終わっても-", cat:"日文", e:2, m:["平靜"], s:["深夜","書桌"], c:"藍", yt:""},
+  {t:"Shohikigen", o:"消費期限", cat:"日文", e:4, m:["酷"], s:["通勤"], c:"紅", yt:""},
+
+  // ── 收錄曲 ──
+  {t:"Shining Diamond", cat:"收錄曲", e:4, m:["開心"], s:["通勤"], c:"黃", yt:""},
+  {t:"Rock", cat:"收錄曲", e:5, m:["幹勁"], s:["運動"], c:"紅", yt:""},
+  {t:"Healing", o:"힐링", cat:"收錄曲", e:3, m:["平靜"], s:["散步","書桌"], c:"粉", yt:""},
+  {t:"Lean On Me", o:"기대", cat:"收錄曲", e:3, m:["平靜","低落"], s:["深夜","書桌"], c:"藍", yt:""},
+  {t:"Habit", o:"입버릇", cat:"收錄曲", e:3, m:["心動"], s:["深夜"], c:"粉", yt:""},
+  {t:"Campfire", o:"캠프파이어", cat:"收錄曲", e:2, m:["平靜"], s:["散步","深夜"], c:"黃", yt:""},
+  {t:"Run to You", o:"지금 널 찾아가고 있어", cat:"收錄曲", e:4, m:["心動"], s:["通勤"], c:"粉", yt:""},
+  {t:"Lucky", cat:"收錄曲", e:4, m:["開心"], s:["通勤"], c:"黃", yt:""},
+  {t:"Snap Shoot", cat:"收錄曲", e:4, m:["開心"], s:["派對","散步"], c:"黃", yt:""},
+  {t:"Fearless", cat:"收錄曲", e:4, m:["酷"], s:["書桌","運動"], c:"黑", yt:""},
+  {t:"My My", cat:"收錄曲", e:4, m:["開心"], s:["散步","通勤"], c:"黃", yt:""},
+  {t:"Heaven's Cloud", cat:"收錄曲", e:3, m:["平靜"], s:["散步"], c:"藍", yt:""},
+  {t:"Crush", cat:"收錄曲", e:4, m:["心動"], s:["派對"], c:"紅", yt:""},
+  {t:"Don Quixote", cat:"收錄曲", e:4, m:["幹勁"], s:["運動"], c:"紅", yt:""},
+  {t:"March", cat:"收錄曲", e:4, m:["幹勁"], s:["通勤"], c:"黃", yt:""},
+  {t:"Domino", cat:"收錄曲", e:4, m:["酷"], s:["派對"], c:"紫", yt:""},
+  {t:"Shadow", cat:"收錄曲", e:3, m:["酷"], s:["深夜"], c:"黑", yt:""},
+  {t:"Ash", cat:"收錄曲", e:4, m:["酷"], s:["深夜"], c:"黑", yt:""},
+  {t:"April Shower", cat:"收錄曲", e:3, m:["平靜"], s:["散步"], c:"粉", yt:""},
+  {t:"Diamond Days", cat:"收錄曲", e:4, m:["開心"], s:["派對"], c:"黃", yt:""},
+  {t:"Yawn", o:"하품", cat:"收錄曲", e:2, m:["平靜"], s:["深夜"], c:"紫", yt:""},
+  {t:"Eyes on You", cat:"收錄曲", e:3, m:["心動"], s:["散步"], c:"粉", yt:""},
+  {t:"Rain", cat:"收錄曲", e:2, m:["低落"], s:["深夜"], c:"藍", yt:""},
+  {t:"Water", cat:"收錄曲", e:3, m:["平靜"], s:["深夜"], c:"藍", yt:""},
+  {t:"1 to 13", cat:"收錄曲", e:4, m:["開心","幹勁"], s:["派對"], c:"黃", yt:""},
+
+  // ── Vocal Team ──
+  {t:"Pinwheel", o:"바람개비", cat:"Vocal Team", who:"VOCAL TEAM", e:2, m:["低落","平靜"], s:["深夜"], c:"藍", yt:""},
+  {t:"Don't Listen in Secret", o:"몰래 듣지 마요", cat:"Vocal Team", who:"VOCAL TEAM", e:2, m:["低落"], s:["深夜"], c:"藍", yt:""},
+  {t:"Hug", o:"포옹", cat:"Vocal Team", who:"VOCAL TEAM", e:2, m:["平靜","心動"], s:["深夜"], c:"粉", yt:""},
+  {t:"Second Life", cat:"Vocal Team", who:"VOCAL TEAM", e:3, m:["低落"], s:["深夜"], c:"藍", yt:""},
+  {t:"Kidult", o:"어른 아이", cat:"Vocal Team", who:"VOCAL TEAM", e:2, m:["平靜"], s:["書桌","深夜"], c:"紫", yt:""},
+  {t:"Dust", o:"먼지", cat:"Vocal Team", who:"VOCAL TEAM", e:2, m:["低落"], s:["深夜"], c:"紫", yt:""},
+  {t:"Cheers to youth", o:"청춘찬가", cat:"Vocal Team", who:"VOCAL TEAM", e:3, m:["平靜","開心"], s:["書桌"], c:"藍", yt:""},
+
+  // ── Hip-hop Team ──
+  {t:"Check-In", cat:"Hip-hop Team", who:"HIPHOP TEAM", e:4, m:["酷"], s:["通勤"], c:"黑", yt:""},
+  {t:"TRAUMA", cat:"Hip-hop Team", who:"HIPHOP TEAM", e:4, m:["酷","低落"], s:["深夜"], c:"黑", yt:""},
+  {t:"Back It Up", cat:"Hip-hop Team", who:"HIPHOP TEAM", e:5, m:["酷","幹勁"], s:["運動"], c:"黑", yt:""},
+  {t:"Fire", cat:"Hip-hop Team", who:"HIPHOP TEAM", e:5, m:["酷","幹勁"], s:["運動"], c:"紅", yt:""},
+  {t:"LALALI", cat:"Hip-hop Team", who:"HIPHOP TEAM", e:5, m:["酷"], s:["運動"], c:"黑", yt:""},
+
+  // ── Performance Team ──
+  {t:"HIGHLIGHT", cat:"Performance Team", who:"PERFORMANCE TEAM", e:4, m:["酷"], s:["運動"], c:"紫", yt:""},
+  {t:"Jam Jam", cat:"Performance Team", who:"PERFORMANCE TEAM", e:4, m:["開心"], s:["派對"], c:"黃", yt:""},
+  {t:"Lilili Yabbay", o:"13월의 춤", cat:"Performance Team", who:"PERFORMANCE TEAM", e:4, m:["酷"], s:["派對"], c:"紫", yt:""},
+  {t:"MOONWALKER", cat:"Performance Team", who:"PERFORMANCE TEAM", e:3, m:["酷"], s:["深夜"], c:"紫", yt:""},
+  {t:"247", cat:"Performance Team", who:"PERFORMANCE TEAM", e:3, m:["心動","酷"], s:["深夜"], c:"紫", yt:""},
+  {t:"I Don't Understand But I Luv U", cat:"Performance Team", who:"PERFORMANCE TEAM", e:4, m:["心動","酷"], s:["派對"], c:"紫", yt:""},
+  {t:"Back 2 Back", cat:"Performance Team", who:"PERFORMANCE TEAM", e:4, m:["酷"], s:["派對"], c:"紫", yt:""},
+  {t:"Spell", cat:"Performance Team", who:"PERFORMANCE TEAM", e:4, m:["酷"], s:["深夜"], c:"紫", yt:""},
+
+  // ── 其他組合 ──
+  {t:"CHANGE UP", cat:"SVT Leaders", who:"LEADERS", e:4, m:["酷"], s:["派對"], c:"黑", yt:""},
+  {t:"Just Do It", o:"거침없이", cat:"BSS", who:"BSS", q:"BSS SEVENTEEN", e:5, m:["開心","幹勁"], s:["派對"], c:"黃", yt:""},
+  {t:"Fighting", o:"파이팅 해야지 (Feat. 李泳知)", cat:"BSS", who:"BSS", q:"BSS SEVENTEEN", e:4, m:["幹勁","開心"], s:["通勤","書桌"], c:"黃", yt:""},
+  {t:"Bittersweet", o:"Feat. Lee Hi", cat:"圓佑 × 珉奎", who:"WONWOO MINGYU", q:"WONWOO MINGYU", e:2, m:["心動","低落"], s:["深夜"], c:"粉", yt:""},
+
+  // ── 成員 solo ──
+  {t:"Jungle", cat:"S.COUPS", who:"S.COUPS", e:4, m:["酷"], s:["運動"], c:"黑", yt:""},
+  {t:"Coincidence", o:"우연", cat:"淨漢", who:"JEONGHAN", e:3, m:["心動"], s:["散步"], c:"粉", yt:""},
+  {t:"Fortunate Change", cat:"Joshua", who:"JOSHUA", e:3, m:["平靜"], s:["散步"], c:"藍", yt:""},
+  {t:"Gemini", o:"쌍둥이자리", cat:"Jun", who:"JUN", e:3, m:["酷"], s:["深夜"], c:"紫", yt:""},
+  {t:"Damage", o:"Feat. Timbaland", cat:"Hoshi", who:"HOSHI", e:4, m:["酷"], s:["派對"], c:"紅", yt:""},
+  {t:"Spider", cat:"Hoshi", who:"HOSHI", q:"HOSHI", e:4, m:["酷"], s:["深夜"], c:"黑", yt:""},
+  {t:"99.9%", cat:"圓佑", who:"WONWOO", e:3, m:["心動"], s:["深夜"], c:"紫", yt:""},
+  {t:"Destiny", o:"운명", cat:"Woozi", who:"WOOZI", e:3, m:["低落"], s:["深夜"], c:"藍", yt:""},
+  {t:"Ruby", cat:"Woozi", who:"WOOZI", q:"WOOZI", e:3, m:["心動"], s:["深夜"], c:"紅", yt:""},
+  {t:"Happy Virus", cat:"DK", who:"DK", e:4, m:["開心"], s:["通勤"], c:"黃", yt:""},
+  {t:"Shake It Off", cat:"珉奎", who:"MINGYU", e:4, m:["開心"], s:["派對"], c:"黃", yt:""},
+  {t:"Skyfall", cat:"The8", who:"THE 8", e:3, m:["酷"], s:["深夜"], c:"紫", yt:""},
+  {t:"Raindrops", cat:"勝寬", who:"SEUNGKWAN", e:2, m:["低落"], s:["深夜"], c:"藍", yt:""},
+  {t:"Shining Star", cat:"Vernon", who:"VERNON", e:3, m:["平靜"], s:["散步"], c:"黃", yt:""},
+  {t:"Black Eye", cat:"Vernon", who:"VERNON", q:"VERNON", e:3, m:["低落"], s:["深夜"], c:"黑", yt:""},
+  {t:"Trigger", cat:"Dino", who:"DINO", e:5, m:["酷"], s:["運動"], c:"紅", yt:""},
+  {t:"Wait", cat:"Dino", who:"DINO", q:"DINO", e:3, m:["心動"], s:["深夜"], c:"紫", yt:""},
+];
+
+/* ===================== 題目 ===================== */
+const COLORS = {粉:"#F7CAC9", 藍:"#92A8D1", 紅:"#E4574F", 黃:"#F5C451", 紫:"#A68BD1", 黑:"#2E2E3A"};
+const QUESTIONS = [
+  {key:"c", text:"憑直覺，選一個顏色", type:"color",
+   opts:["粉","藍","紅","黃","紫","黑"].map(c=>({label:c+"色", v:c}))},
+  {key:"s", text:"你現在在哪裡？",
+   opts:[{label:"通勤路上",v:"通勤",em:"🚇"},{label:"書桌前",v:"書桌",em:"📚"},{label:"運動中",v:"運動",em:"🏃"},
+         {label:"派對聚會",v:"派對",em:"🎉"},{label:"深夜房間",v:"深夜",em:"🌙"},{label:"戶外散步",v:"散步",em:"🌿"}]},
+  {key:"m", text:"現在的心情是？",
+   opts:[{label:"超開心",v:"開心",em:"😆"},{label:"心動",v:"心動",em:"💗"},{label:"很有幹勁",v:"幹勁",em:"🔥"},
+         {label:"平靜放鬆",v:"平靜",em:"🍵"},{label:"有點低落",v:"低落",em:"🌧️"},{label:"想耍酷",v:"酷",em:"😎"}]},
+  {key:"e", text:"想要什麼節奏？", one:true,
+   opts:[{label:"越嗨越好",v:5,em:"⚡"},{label:"輕快剛好",v:3.5,em:"🎈"},{label:"慢慢聽",v:2,em:"☁️"}]},
+];
+
+/* ===================== 計分 ===================== */
+const W = {color:3, scene:3, mood:4, energy:3};
+function scoreSong(song, a){
+  let s = 0;
+  if(song.c === a.c) s += W.color;
+  if(song.s.includes(a.s)) s += W.scene;
+  if(song.m.includes(a.m)) s += W.mood;
+  s += W.energy - Math.abs(song.e - a.e) * 1.5;   // 能量越接近越高分
+  return s;
+}
+function recommend(a, avoid){
+  const ranked = SONGS.map(song => ({song, base:scoreSong(song,a), r:Math.random()*2}))
+    .filter(x => !avoid || x.song !== avoid)
+    .sort((x,y) => (y.base + y.r) - (x.base + x.r));   // 加一點隨機，分數相近的歌輪流出現
+  return ranked.slice(0,4).map(x=>x.song);
+}
+
+/* ===================== 工具 ===================== */
+function ytId(v){
+  if(!v) return "";
+  v = v.trim();
+  if(/^[\w-]{11}$/.test(v)) return v;
+  const m = v.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
+  return m ? m[1] : "";
+}
+function searchUrl(song){
+  const q = ["SEVENTEEN", song.who||"", song.t].filter(Boolean).join(" ");
+  return "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
+}
+function watchUrl(song){ const id = ytId(song.yt); return id ? "https://www.youtube.com/watch?v="+id : searchUrl(song); }
+const $ = id => document.getElementById(id);
+function show(id){ ["intro","quiz","result"].forEach(x=>$(x).classList.toggle("hidden", x!==id)); $(id).classList.remove("fade"); void $(id).offsetWidth; $(id).classList.add("fade"); window.scrollTo({top:0,behavior:"smooth"}); }
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1600); }
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+/* ===================== 30 秒試聽（iTunes） ===================== */
+const Preview = (() => {
+  const audio = new Audio();
+  audio.preload = "auto";
+  const cache = {};          // 歌名 → 試聽網址（或 null）
+  let token = 0, unlocked = false, netFail = 0, netOk = 0;
+
+  // 產生一段極短的無聲音檔，用來在使用者點擊時「解鎖」手機的自動播放限制
+  function silentWav(){
+    const n = 800, buf = new ArrayBuffer(44 + n), v = new DataView(buf);
+    const w = (o,s) => [...s].forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));
+    w(0,"RIFF"); v.setUint32(4,36+n,true); w(8,"WAVE"); w(12,"fmt ");
+    v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+    v.setUint32(24,8000,true); v.setUint32(28,8000,true); v.setUint16(32,1,true); v.setUint16(34,8,true);
+    w(36,"data"); v.setUint32(40,n,true);
+    for(let i=0;i<n;i++) v.setUint8(44+i,128);
+    return URL.createObjectURL(new Blob([buf],{type:"audio/wav"}));
+  }
+  const SILENT = silentWav();
+
+  // 必須在使用者點擊的當下呼叫
+  function unlock(){
+    if(unlocked) return;
+    try{ audio.src = SILENT; const p = audio.play(); if(p) p.then(()=>{unlocked=true;}).catch(()=>{}); }catch(e){}
+  }
+
+  // 用 JSONP 呼叫 iTunes 搜尋（直接開啟 HTML 檔也能用）
+  function jsonp(url){
+    return new Promise((resolve, reject) => {
+      const cb = "itcb_" + Math.random().toString(36).slice(2);
+      const s = document.createElement("script");
+      const timer = setTimeout(()=>{ cleanup(); reject(new Error("timeout")); }, 8000);
+      function cleanup(){ clearTimeout(timer); delete window[cb]; s.remove(); }
+      window[cb] = data => { cleanup(); resolve(data); };
+      s.onerror = () => { cleanup(); reject(new Error("network")); };
+      s.src = url + "&callback=" + cb;
+      document.body.appendChild(s);
+    });
+  }
+
+  const norm = x => (x||"").toLowerCase().normalize("NFKC").replace(/[^\p{L}\p{N}]/gu,"");
+  const ARTISTS = ["seventeen","세븐틴","セブンティーン","bss","부석순","hoshi","호시","woozi","우지","vernon","버논","dino","디노","wonwoo","원우","mingyu","민규"];
+
+  function pick(results, song){
+    const names = [song.t, song.o].filter(Boolean).map(norm).filter(Boolean);
+    const isJp = song.cat === "日文";
+    let best = null, bestScore = -1;
+    for(const r of results || []){
+      if(!r.previewUrl) continue;
+      const artist = norm(r.artistName);
+      if(!ARTISTS.some(a => artist.includes(norm(a)))) continue;
+      const tn = norm(r.trackName);
+      const lower = (r.trackName||"").toLowerCase();
+      let sc = 0;
+      if(names.some(n => tn === n)) sc += 10;
+      else if(names.some(n => tn.includes(n) || (n.length > 3 && n.includes(tn)))) sc += 6;
+      else continue;
+      if(/inst|remix|acoustic|live|sped|slowed/.test(lower)) sc -= 4;
+      if(isJp && /korean ver/.test(lower)) sc -= 3;
+      if(!isJp && /japanese ver|jpn ver/.test(lower)) sc -= 3;
+      if(sc > bestScore){ bestScore = sc; best = r; }
+    }
+    return best ? best.previewUrl : null;
+  }
+
+  async function find(song){
+    const key = song.t + "|" + (song.q||"");
+    if(key in cache) return cache[key];
+    netFail = 0; netOk = 0;
+    const artist = song.q || "SEVENTEEN";
+    const terms = [artist + " " + song.t];
+    if(song.o) terms.push(artist + " " + song.o);
+    for(const country of ["TW","US"]){
+      for(const term of terms){
+        try{
+          const data = await jsonp(`https://itunes.apple.com/search?media=music&entity=song&limit=25&country=${country}&term=${encodeURIComponent(term)}`);
+          netOk++;
+          const url = pick(data.results, song);
+          if(url){ cache[key] = url; return url; }
+        }catch(e){ netFail++; }
+      }
+    }
+    if(netOk === 0) return "NET";          // 完全連不上，不寫入快取，下次再試
+    cache[key] = null;
+    return null;
+  }
+
+  // UI
+  const btn = () => $("npBtn"), status = () => $("npStatus"), bar = () => $("npBar"), box = () => $("np");
+  function setStatus(html, playing){
+    status().innerHTML = html;
+    box().classList.toggle("paused", !playing);
+    btn().textContent = playing ? "❚❚" : "▶";
+  }
+  audio.addEventListener("timeupdate", ()=>{
+    if(audio.src === SILENT || !audio.duration) return;
+    bar().style.width = (audio.currentTime / audio.duration * 100) + "%";
+  });
+  audio.addEventListener("ended", ()=>{ if(audio.src!==SILENT) setStatus("試聽結束，按 ▶ 再聽一次", false); });
+
+  async function load(song){
+    const my = ++token;
+    audio.pause(); bar().style.width = "0";
+    btn().disabled = true;
+    setStatus("正在找《" + esc(song.t) + "》的試聽片段…", false);
+    const url = await find(song);
+    if(my !== token) return;              // 使用者已經換歌了
+    if(url === "NET"){
+      setStatus("連不到試聽服務（可能是網路或預覽視窗的限制），請用瀏覽器直接開啟檔案", false);
+      return;
+    }
+    if(!url){
+      setStatus("找不到這首歌的試聽片段，請按下方按鈕到 YouTube 聽", false);
+      return;
+    }
+    audio.src = url; audio.currentTime = 0;
+    btn().disabled = false;
+    try{
+      await audio.play();
+      if(my === token) setStatus('<span class="eq"><b></b><b></b><b></b></span>試聽中 · 30 秒片段', true);
+    }catch(e){
+      if(my === token) setStatus("按 ▶ 開始試聽", false);   // 瀏覽器擋下自動播放
+    }
+  }
+  function toggle(){
+    if(btn().disabled) return;
+    if(audio.paused){
+      audio.play().then(()=>setStatus('<span class="eq"><b></b><b></b><b></b></span>試聽中 · 30 秒片段', true)).catch(()=>{});
+    }else{
+      audio.pause(); setStatus("已暫停", false);
+    }
+  }
+  function stop(){ token++; audio.pause(); }
+  return {unlock, load, toggle, stop};
+})();
+
+/* ===================== 流程 ===================== */
+let step = 0, answers = {}, labels = {}, current = null, lastMain = null;
+
+function renderQ(){
+  const q = QUESTIONS[step];
+  $("progress").innerHTML = QUESTIONS.map((_,i)=>`<span class="${i<=step?'on':''}"></span>`).join("");
+  $("qnum").textContent = `Q${step+1} / ${QUESTIONS.length}`;
+  $("qtext").textContent = q.text;
+  $("opts").className = "opts" + (q.one ? " one" : "");
+  $("opts").innerHTML = q.opts.map((o,i)=>{
+    const icon = q.type==="color" ? `<span class="swatch" style="background:${COLORS[o.v]}"></span>` : `<span class="emoji">${o.em}</span>`;
+    return `<button class="opt" data-i="${i}">${icon}<span>${o.label}</span></button>`;
+  }).join("");
+  $("backBtn").style.visibility = step===0 ? "hidden" : "visible";
+}
+$("opts").addEventListener("click", e=>{
+  const b = e.target.closest(".opt"); if(!b) return;
+  const q = QUESTIONS[step], o = q.opts[+b.dataset.i];
+  answers[q.key] = o.v; labels[q.key] = o.label;
+  if(step < QUESTIONS.length-1){ step++; renderQ(); }
+  else { Preview.unlock(); showResult(); }
+});
+$("backBtn").addEventListener("click", ()=>{ if(step>0){ step--; renderQ(); } });
+$("startBtn").addEventListener("click", ()=>{ Preview.stop(); step=0; answers={}; labels={}; renderQ(); show("quiz"); });
+$("restartBtn").addEventListener("click", ()=>{ Preview.stop(); step=0; answers={}; labels={}; renderQ(); show("quiz"); });
+$("againBtn").addEventListener("click", ()=>{ Preview.unlock(); showResult(true); });
+$("npBtn").addEventListener("click", ()=> Preview.toggle());
+
+function showResult(reroll){
+  const list = recommend(answers, reroll ? lastMain : null);
+  lastMain = list[0];
+  renderMain(list[0], list);
+  show("result");
+}
+
+function renderMain(song, list){
+  current = song;
+  $("mTitle").textContent = song.t;
+  $("mOrig").textContent = song.o || "";
+  $("mTags").innerHTML = [song.cat, song.c+"色", ...song.m, ...song.s].map(x=>`<span class="tag">${esc(x)}</span>`).join("");
+  Preview.load(song);
+  $("ytLink").href = watchUrl(song);
+  $("ytLink").textContent = ytId(song.yt) ? "▶ 到 YouTube 聽" : "▶ 到 YouTube 搜尋這首歌";
+  // 備選
+  const alts = list.filter(x=>x!==song).slice(0,3);
+  $("alts").innerHTML = alts.map((a,i)=>`<button class="alt" data-i="${i}"><span>${esc(a.t)}<small>${esc(a.cat)}${a.o? " · "+esc(a.o):""}</small></span><span class="go">換成這首 ›</span></button>`).join("");
+  $("alts").onclick = e=>{
+    const b = e.target.closest(".alt"); if(!b) return;
+    Preview.unlock();
+    const pick = alts[+b.dataset.i];
+    renderMain(pick, [pick, ...list.filter(x=>x!==pick)]);
+    window.scrollTo({top:0,behavior:"smooth"});
+  };
+}
+
+$("shareBtn").addEventListener("click", ()=>{
+  const text = `今天適合我的 SEVENTEEN：${current.t}${current.o? "（"+current.o+"）":""}\n顏色 ${labels.c}｜${labels.s}｜${labels.m}｜${labels.e}\n${watchUrl(current)}`;
+  const done = ()=>toast("已複製，可以貼給朋友了");
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done)); }
+  else fallbackCopy(text,done);
+});
+function fallbackCopy(text, done){
+  const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); done(); }catch(e){ prompt("複製下面的文字：", text); }
+  ta.remove();
+}
+</script>
+</body>
+</html>
